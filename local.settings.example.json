@@ -1,0 +1,10 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "FABRIC_GRAPHQL_ENDPOINT": "",
+    "AZURE_TOKEN_CREDENTIALS": "AzureCliCredential",
+    "APPLICATIONINSIGHTS_CONNECTION_STRING": ""
+  }
+}

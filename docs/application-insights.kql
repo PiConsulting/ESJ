@@ -1,0 +1,49 @@
+// Ejecutar en Logs del recurso Application Insights (tablas requests/traces/dependencies).
+// En Log Analytics los nombres equivalentes son AppRequests/AppTraces/AppDependencies.
+
+// 1. Encontrar los eventos de una solicitud con X-Request-ID, sin conocer operation_Id.
+let requestId = "REEMPLAZAR_X_REQUEST_ID";
+traces
+| where timestamp > ago(24h)
+| extend e = parse_json(message)
+| where tostring(e.request_id) == requestId
+| project timestamp, event=tostring(e.event), operation_Id,
+          trace_id=tostring(e.trace_id), invocation_id=tostring(e.invocation_id),
+          status_code=toint(e.status_code), upstream_status=toint(e.upstream_status),
+          duration_ms=todouble(e.duration_ms), reason=tostring(e.reason)
+| order by timestamp asc
+
+// 2. Ver la operación completa usando el X-Trace-ID de la respuesta HTTP.
+let traceId = "REEMPLAZAR_X_TRACE_ID";
+union withsource=tabla requests, dependencies, traces
+| where timestamp > ago(24h)
+| where operation_Id == traceId
+| order by timestamp asc
+
+// 3. Tasa de error y latencia de nuestra API (eventos finalizados, no estado de invocación).
+traces
+| where timestamp > ago(24h)
+| extend e = parse_json(message)
+| where tostring(e.event) == "request.completed"
+| extend status=toint(e.status_code), latency=todouble(e.duration_ms)
+| summarize solicitudes=count(), errores_5xx=countif(status >= 500),
+            rechazos_4xx=countif(status >= 400 and status < 500),
+            p50_ms=percentile(latency, 50), p95_ms=percentile(latency, 95)
+            by bin(timestamp, 5m)
+| order by timestamp desc
+
+// 4. Dependencia Fabric: también marca fallo si HTTP 200 incluye errores GraphQL.
+dependencies
+| where timestamp > ago(24h) and tostring(customDimensions["app.operation"]) == "fabric.graphql"
+| project timestamp, operation_Id, name, duration, success, resultCode, customDimensions
+| order by timestamp desc
+
+// 5. Diagnósticos propios de fallas, sin mensajes ni datos de terceros.
+traces
+| where timestamp > ago(24h)
+| extend e = parse_json(message)
+| where tostring(e.event) in ("request.failed", "operation.failed")
+| project timestamp, request_id=tostring(e.request_id), operation_Id,
+          operation=tostring(e.operation), error_code=tostring(e.error_code),
+          error_type=tostring(e.error_type), reason=tostring(e.reason)
+| order by timestamp desc

@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+local.settings.json
+.env
+.env.*
+!.env.example
+.azurite/
+.tools/
+*.log
+respuesta_epre.txt
+.vscode/
+dist/
+deploy/azure-settings.json

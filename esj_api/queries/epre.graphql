@@ -1,0 +1,74 @@
+query {
+  vw_kpi_epres {
+    items {
+      Metrica
+      Fecha
+      Hora
+      Valor
+    }
+  }
+  demanda_Generacions {
+    items {
+      Fecha_Hora
+      Demanda
+      Generacion
+    }
+  }
+  carteros {
+    items {
+      fecha_hora
+      mensaje
+    }
+  }
+  cantidad_Reclamos {
+    items {
+      Fecha_Hora
+      Reclamos_Totales
+    }
+  }
+  reclamos {
+    items {
+      Fecha_Hora
+      Descripcion
+      Reclamo
+      Suministro
+      Tipo
+    }
+  }
+  vw_reclamos_gps {
+    items {
+      Tipo
+      Latitud
+      Longitud
+      Suministro
+      Reclamo
+      Fecha_Hora
+      Descripcion
+    }
+  }
+  cantidad_Setas_Afectadas {
+    items {
+      Fecha_Hora
+      Cantidad
+    }
+  }
+  setas_Afectadas {
+    items {
+      Fecha_Hora
+      ET_Distribuidor
+      ID_Seta
+      Usuarios_Afectados
+    }
+  }
+  vw_setas_afectadas_gps {
+    items {
+      Tipo
+      Latitud
+      Longitud
+      ET_Distribuidor
+      Setas
+      Fecha_Hora
+      Descripcion
+    }
+  }
+}

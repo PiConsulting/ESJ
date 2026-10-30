@@ -1,0 +1,22 @@
+Necesitamos habilitar el acceso de la nueva Azure Function de desarrollo a la API GraphQL de Fabric.
+
+Identidad: Managed Identity asignada por el sistema.
+Nombre: func-pi-epre-dev-hnso27
+Object ID / Principal ID: 076d1b24-1406-43bc-a477-922d03cb5cc0
+Tenant Naturgy Argentina: cddb6514-1d4f-4a4a-a3ed-a1ca3de10829
+Grupo de recursos Azure: rg-pi-epre-dev
+
+Workspace Fabric: 1873b863-b221-43a0-9522-aed836c91536
+API GraphQL (item ID): 7ef769b0-d967-4e06-9b6b-5d97d2c8853f
+
+Solicitamos:
+1. Permiso Execute (Run Queries and Mutations) para esta identidad sobre esa API GraphQL.
+2. Permisos de lectura en las fuentes asociadas que sean necesarios según la configuración de autenticación de la API, incluyendo SSO si aplica. Nuestra Function sólo ejecuta consultas de lectura.
+3. Verificar que la configuración del tenant permita a esta identidad usar las APIs de Fabric.
+
+Preferimos permisos sobre los elementos necesarios; no necesitamos acceso de escritura a todo el workspace. La referencia del proyecto utiliza Contributor como simplificación para una demo, pero no se asignó ese rol automáticamente.
+
+Prueba realizada: la Function obtiene el token de su Managed Identity, pero GraphQL responde HTTP 403. El endpoint REST devuelve 503 de forma controlada y registra el diagnóstico en Application Insights.
+La cuenta 99014849@naturgy.com.ar sí permite consultar datos localmente, pero al consultar la administración de roles del workspace devuelve InsufficientWorkspaceRole.
+
+No se necesitan contraseñas, client secrets ni tokens compartidos. Una vez otorgados los permisos, repetiremos la consulta completa y comprobaremos el 200 con datos reales.
